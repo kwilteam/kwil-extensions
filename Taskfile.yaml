@@ -3,4 +3,6 @@ version: "3"
 tasks:
   generate:pb:
     cmds:
-      - protoc -I ./proto --go_out=paths=source_relative:./gen --go_opt=M=proto/*.proto=extension ./proto/*.proto 
+      - | 
+        protoc -I ./proto --go_out=paths=source_relative:./gen --go_opt=M=proto/*.proto=gen \
+        --go-grpc_out=./gen --go-grpc_opt=paths=source_relative ./proto/*.proto 

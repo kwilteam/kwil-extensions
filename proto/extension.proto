@@ -8,37 +8,25 @@ service ExtensionService {
     // Ex: An Eth RPC extension would need the URL of the RPC server.
     rpc Configure(ConfigureRequest) returns (ConfigureResponse) {}
 
-    // Versions is used to get the supported versions of the extension.
-    // The versions will be returned in order or newest to oldest.
-    rpc Versions(VersionsRequest) returns (VersionsResponse) {}
-
     // ListMethods is used to list the methods which the extension provides.
     rpc ListMethods(ListMethodsRequest) returns (ListMethodsResponse) {}
 
     // Execute is used to execute a method provided by the extension.
     rpc Execute(ExecuteRequest) returns (ExecuteResponse) {}
 
-    // GetMetadata is used to get required metadata for a certain version.
+    // GetMetadata is used to get required metadata.
     rpc GetMetadata(GetMetadataRequest) returns (GetMetadataResponse) {}
 }
 
 message ConfigureRequest {
-    map<string, string> config = 1;
+    map<string, string> config = 1; // maps the name to the value
 }
 
 message ConfigureResponse {
     bool success = 1;
-    string error = 2;
-}
-
-message VersionsRequest {}
-
-message VersionsResponse {
-    repeated string versions = 1;
 }
 
 message ListMethodsRequest {
-    string version = 1;
 }
 
 message ListMethodsResponse {
@@ -47,37 +35,29 @@ message ListMethodsResponse {
 
 message Method {
     string name = 1;
-    map<string, ScalarType> required_inputs = 2; // maps the name to the type of the input required
+    repeated string required_inputs = 2; // array of the required inputs and their types
 }
 
 message ExecuteRequest {
     string name = 1;
-    repeated ScalarValue data = 2;
-    map<string, ScalarValue> metadata = 3;
+    repeated ScalarValue args = 2;
+    map<string, string> metadata = 3; // maps the name to the value
 }
 
 message ExecuteResponse {
-    repeated ScalarValue data = 1;
+    repeated ScalarValue outputs = 1;
 }
 
 message GetMetadataRequest {
-    string version = 1;
 }
 
 message GetMetadataResponse {
-    string version = 1;
-    map<string, ScalarType> required_metadata = 2; // maps the name to the type of the metadata required
+    map<string, string> required_metadata = 1; // maps the name to the default value
 }
 
 // ScalarValue is used to represent a scalar value.
 // It only supports types supported by Kwil
 message ScalarValue {
-    ScalarType type = 1;
+    string type = 1;
     bytes value = 2;
-}
-
-enum ScalarType {
-    UNKNOWN = 0;
-    STRING = 1;
-    INT = 2;
 }
