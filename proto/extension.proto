@@ -13,9 +13,6 @@ service ExtensionService {
 
     // Execute is used to execute a method provided by the extension.
     rpc Execute(ExecuteRequest) returns (ExecuteResponse) {}
-
-    // GetMetadata is used to get required metadata.
-    rpc GetMetadata(GetMetadataRequest) returns (GetMetadataResponse) {}
 }
 
 message ConfigureRequest {
@@ -41,13 +38,6 @@ message ExecuteRequest {
 
 message ExecuteResponse {
     repeated ScalarValue outputs = 1;
-}
-
-message GetMetadataRequest {
-}
-
-message GetMetadataResponse {
-    map<string, string> required_metadata = 1; // maps the name to the default value
 }
 
 // ScalarValue is used to represent a scalar value.

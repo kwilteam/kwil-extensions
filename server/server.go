@@ -158,7 +158,3 @@ func mergeStringMaps(firstMap map[string]string, secondMap map[string]string) (m
 
 	return finalMap, nil
 }
-
-func (s *Server) GetMetadata(ctx context.Context, req *gen.GetMetadataRequest) (*gen.GetMetadataResponse, error) {
-	return &gen.GetMetadataResponse{}, nil
-}
