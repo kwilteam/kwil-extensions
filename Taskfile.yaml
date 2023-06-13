@@ -6,3 +6,8 @@ tasks:
       - | 
         protoc -I ./proto --go_out=paths=source_relative:./gen --go_opt=M=proto/*.proto=gen \
         --go-grpc_out=./gen --go-grpc_opt=paths=source_relative ./proto/*.proto 
+  
+  dockerize:hello-world:
+    cmds:
+      - | 
+        docker build -t hello-world-extenstion ./examples/hello-world
