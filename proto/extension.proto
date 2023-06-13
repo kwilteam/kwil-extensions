@@ -30,12 +30,7 @@ message ListMethodsRequest {
 }
 
 message ListMethodsResponse {
-    repeated Method methods = 1;
-}
-
-message Method {
-    string name = 1;
-    repeated string required_inputs = 2; // array of the required inputs and their types
+    repeated string methods = 1;
 }
 
 message ExecuteRequest {

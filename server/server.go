@@ -3,6 +3,8 @@ package server
 import (
 	"context"
 	"fmt"
+	"reflect"
+	"runtime"
 	"strings"
 
 	gen "github.com/kwilteam/kwil-extensions/gen"
@@ -12,44 +14,41 @@ import (
 type Server struct {
 	gen.UnimplementedExtensionServiceServer
 
-	Extension        UserExtension
-	Configs          map[string]string
-	Methods          map[string]*Method
+	ConfigFunc       ConfigFunc
+	Methods          map[string]MethodFunc
 	RequiredMetadata map[string]string
 
 	configured bool
 }
 
-func NewExtensionServer(ext *ExtensionConfig, extensionObject UserExtension) *Server {
-	mappedMethods := make(map[string]*Method)
+func NewExtensionServer(ext *ExtensionConfig) (*Server, error) {
+	mappedMethods := make(map[string]MethodFunc)
 	for _, method := range ext.Methods {
-		mappedMethods[strings.ToLower(method.Name)] = method
+		name := strings.ToLower(getFunctionName(method))
+		_, ok := mappedMethods[name]
+		if ok {
+			return nil, fmt.Errorf("duplicate method name: %s", name)
+		}
+
+		mappedMethods[name] = method
 	}
 
 	return &Server{
-		Extension:        extensionObject,
-		Configs:          ext.Configs,
+		ConfigFunc:       ext.ConfigFunc,
 		Methods:          mappedMethods,
 		RequiredMetadata: ext.RequiredMetadata,
-	}
+	}, nil
+}
+
+func getFunctionName(f interface{}) string {
+	return runtime.FuncForPC(reflect.ValueOf(f).Pointer()).Name()
 }
 
 func (s *Server) Configure(ctx context.Context, req *gen.ConfigureRequest) (*gen.ConfigureResponse, error) {
-	mergedConfigs, err := mergeStringMaps(s.Configs, req.Config)
+	err := s.ConfigFunc(req.Config)
 	if err != nil {
-		return &gen.ConfigureResponse{
-			Success: false,
-		}, fmt.Errorf("error with provided config: %s", err.Error())
+		return nil, fmt.Errorf("error configuring extension: %s", err.Error())
 	}
-
-	err = s.Extension.Configure(mergedConfigs)
-	if err != nil {
-		return &gen.ConfigureResponse{
-			Success: false,
-		}, fmt.Errorf("error configuring extension: %s", err.Error())
-	}
-
-	s.Configs = mergedConfigs
 
 	s.configured = true
 
@@ -59,26 +58,14 @@ func (s *Server) Configure(ctx context.Context, req *gen.ConfigureRequest) (*gen
 }
 
 func (s *Server) ListMethods(ctx context.Context, req *gen.ListMethodsRequest) (*gen.ListMethodsResponse, error) {
-	methods := make([]*gen.Method, 0, len(s.Methods))
-	for _, method := range s.Methods {
-		methods = append(methods, &gen.Method{
-			Name:           method.Name,
-			RequiredInputs: convertRequiredInputs(method.RequiredInputs),
-		})
+	methods := []string{}
+	for name := range s.Methods {
+		methods = append(methods, name)
 	}
 
 	return &gen.ListMethodsResponse{
 		Methods: methods,
 	}, nil
-}
-
-func convertRequiredInputs(inputs []types.ScalarType) []string {
-	requiredInputs := make([]string, 0, len(inputs))
-	for _, input := range inputs {
-		requiredInputs = append(requiredInputs, input.String())
-	}
-
-	return requiredInputs
 }
 
 func (s *Server) Execute(ctx context.Context, req *gen.ExecuteRequest) (*gen.ExecuteResponse, error) {
@@ -89,10 +76,6 @@ func (s *Server) Execute(ctx context.Context, req *gen.ExecuteRequest) (*gen.Exe
 	method, ok := s.Methods[strings.ToLower(req.Name)]
 	if !ok {
 		return nil, fmt.Errorf("method not found: %s", req.Name)
-	}
-
-	if len(req.Args) != len(method.RequiredInputs) {
-		return nil, fmt.Errorf("incorrect number of inputs provided: expected %d, got %d", len(method.RequiredInputs), len(req.Args))
 	}
 
 	var err error
@@ -106,12 +89,10 @@ func (s *Server) Execute(ctx context.Context, req *gen.ExecuteRequest) (*gen.Exe
 		return nil, fmt.Errorf("error with provided inputs: %s", err.Error())
 	}
 
-	err = method.canExecute(convertedInputs)
-	if err != nil {
-		return nil, fmt.Errorf("error with provided inputs: %s", err.Error())
-	}
-
-	outputs, err := method.Function(convertedInputs, req.Metadata)
+	outputs, err := method(&types.ExecutionContext{
+		Ctx:      ctx,
+		Metadata: req.Metadata,
+	}, convertedInputs...)
 	if err != nil {
 		return nil, fmt.Errorf("error executing method: %s", err.Error())
 	}

@@ -2,19 +2,20 @@ package builder
 
 import (
 	"github.com/kwilteam/kwil-extensions/server"
-	"github.com/kwilteam/kwil-extensions/types"
 )
 
-func Builder() *ExtensionBuilder {
-	return &ExtensionBuilder{}
+func Builder() ExtensionConfigFuncBuilder {
+	return &ExtensionBuilder{
+		config: &server.ExtensionConfig{},
+	}
 }
 
 type ExtensionBuilder struct {
-	config *server.ExtConf
+	config *server.ExtensionConfig
 }
 
 type ExtensionConfigFuncBuilder interface {
-	WithConfigFunc(func(map[string]string) error) ExtensionMetadataBuilder
+	WithConfigFunc(server.ConfigFunc) ExtensionMetadataBuilder
 }
 
 type ExtensionMetadataBuilder interface {
@@ -22,5 +23,28 @@ type ExtensionMetadataBuilder interface {
 }
 
 type ExtensionMethodBuilder interface {
-	WithMethods(...func([]*types.ScalarValue, map[string]string) ([]*types.ScalarValue, error)) ExtensionBuilder
+	WithMethods(...server.MethodFunc) ExtensionBuildBuilder
+}
+
+type ExtensionBuildBuilder interface {
+	Build() (*server.Server, error)
+}
+
+func (b *ExtensionBuilder) WithConfigFunc(configFunc server.ConfigFunc) ExtensionMetadataBuilder {
+	b.config.ConfigFunc = configFunc
+	return b
+}
+
+func (b *ExtensionBuilder) WithRequiredMetadata(requiredMetadata map[string]string) ExtensionMethodBuilder {
+	b.config.RequiredMetadata = requiredMetadata
+	return b
+}
+
+func (b *ExtensionBuilder) WithMethods(methods ...server.MethodFunc) ExtensionBuildBuilder {
+	b.config.Methods = methods
+	return b
+}
+
+func (b *ExtensionBuilder) Build() (*server.Server, error) {
+	return server.NewExtensionServer(b.config)
 }
