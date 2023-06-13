@@ -37,7 +37,7 @@ func (h *HelloWorldExt) SayHello(ctx *types.ExecutionContext, values ...*types.S
 		return nil, fmt.Errorf("expected first value to be of type STRING, got %s", values[0].Type)
 	}
 
-	name := string(values[0].Value)
+	name := values[0].String()
 
 	result := h.sayHello(name, ctx.Metadata["punctuation"])
 

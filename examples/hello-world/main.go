@@ -7,7 +7,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	hello "github.com/kwilteam/kwil-extensions/examples/hello-world/extension"
+	hello "github.com/kwilteam/extension-hello-world/extension"
 	gen "github.com/kwilteam/kwil-extensions/gen"
 
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/recovery"
