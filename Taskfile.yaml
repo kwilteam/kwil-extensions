@@ -1,0 +1,6 @@
+version: "3"
+
+tasks:
+  generate:pb:
+    cmds:
+      - protoc -I ./proto --go_out=paths=source_relative:./gen --go_opt=M=proto/*.proto=extension ./proto/*.proto 
