@@ -9,6 +9,7 @@ import (
 
 	gen "github.com/kwilteam/kwil-extensions/gen"
 	"github.com/kwilteam/kwil-extensions/types"
+	"github.com/kwilteam/kwil-extensions/types/convert"
 )
 
 type Server struct {
@@ -84,7 +85,7 @@ func (s *Server) Execute(ctx context.Context, req *gen.ExecuteRequest) (*gen.Exe
 		return nil, fmt.Errorf("error with provided metadata: %s", err.Error())
 	}
 
-	convertedInputs, err := convertInputsFromPb(req.Args)
+	convertedInputs, err := convert.ConvertScalarFromPb(req.Args)
 	if err != nil {
 		return nil, fmt.Errorf("error with provided inputs: %s", err.Error())
 	}
@@ -97,7 +98,7 @@ func (s *Server) Execute(ctx context.Context, req *gen.ExecuteRequest) (*gen.Exe
 		return nil, fmt.Errorf("error executing method: %s", err.Error())
 	}
 
-	convertedOutputs, err := convertOutputsToPb(outputs)
+	convertedOutputs, err := convert.ConvertScalarToPb(outputs)
 	if err != nil {
 		return nil, fmt.Errorf("error converting outputs: %s", err.Error())
 	}
@@ -105,35 +106,6 @@ func (s *Server) Execute(ctx context.Context, req *gen.ExecuteRequest) (*gen.Exe
 	return &gen.ExecuteResponse{
 		Outputs: convertedOutputs,
 	}, nil
-}
-
-func convertOutputsToPb(outputs []*types.ScalarValue) ([]*gen.ScalarValue, error) {
-	convertedOutputs := make([]*gen.ScalarValue, 0, len(outputs))
-	for _, output := range outputs {
-		convertedOutputs = append(convertedOutputs, &gen.ScalarValue{
-			Type:  output.Type.String(),
-			Value: output.Value,
-		})
-	}
-
-	return convertedOutputs, nil
-}
-
-func convertInputsFromPb(inputs []*gen.ScalarValue) ([]*types.ScalarValue, error) {
-	convertedInputs := make([]*types.ScalarValue, 0, len(inputs))
-	for _, input := range inputs {
-		convertedType, err := types.ScalarTypeFromString(input.Type)
-		if err != nil {
-			return nil, fmt.Errorf("invalid scalar type: %s", err.Error())
-		}
-
-		convertedInputs = append(convertedInputs, &types.ScalarValue{
-			Type:  convertedType,
-			Value: input.Value,
-		})
-	}
-
-	return convertedInputs, nil
 }
 
 // mergeStringMaps merges two maps of strings.  If a key exists in both maps,
