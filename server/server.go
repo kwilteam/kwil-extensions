@@ -12,18 +12,22 @@ import (
 type Server struct {
 	gen.UnimplementedExtensionServiceServer
 
+	Extension        UserExtension
 	Configs          map[string]string
 	Methods          map[string]*Method
 	RequiredMetadata map[string]string
+
+	configured bool
 }
 
-func NewExtensionServer(ext *Extension) *Server {
+func NewExtensionServer(ext *ExtensionConfig, extensionObject UserExtension) *Server {
 	mappedMethods := make(map[string]*Method)
 	for _, method := range ext.Methods {
 		mappedMethods[strings.ToLower(method.Name)] = method
 	}
 
 	return &Server{
+		Extension:        extensionObject,
 		Configs:          ext.Configs,
 		Methods:          mappedMethods,
 		RequiredMetadata: ext.RequiredMetadata,
@@ -31,13 +35,23 @@ func NewExtensionServer(ext *Extension) *Server {
 }
 
 func (s *Server) Configure(ctx context.Context, req *gen.ConfigureRequest) (*gen.ConfigureResponse, error) {
-	var err error
-	s.Configs, err = mergeStringMaps(s.Configs, req.Config)
+	mergedConfigs, err := mergeStringMaps(s.Configs, req.Config)
 	if err != nil {
 		return &gen.ConfigureResponse{
 			Success: false,
 		}, fmt.Errorf("error with provided config: %s", err.Error())
 	}
+
+	err = s.Extension.Configure(mergedConfigs)
+	if err != nil {
+		return &gen.ConfigureResponse{
+			Success: false,
+		}, fmt.Errorf("error configuring extension: %s", err.Error())
+	}
+
+	s.Configs = mergedConfigs
+
+	s.configured = true
 
 	return &gen.ConfigureResponse{
 		Success: true,
@@ -68,6 +82,10 @@ func convertRequiredInputs(inputs []types.ScalarType) []string {
 }
 
 func (s *Server) Execute(ctx context.Context, req *gen.ExecuteRequest) (*gen.ExecuteResponse, error) {
+	if !s.configured {
+		return nil, fmt.Errorf("extension has not been configured by node")
+	}
+
 	method, ok := s.Methods[strings.ToLower(req.Name)]
 	if !ok {
 		return nil, fmt.Errorf("method not found: %s", req.Name)

@@ -6,10 +6,16 @@ import (
 	"github.com/kwilteam/kwil-extensions/types"
 )
 
-// Extension is an application that is meant to extend the functionality
+type ExtConf struct {
+	ConfigFunc       func(map[string]string) error
+	RequiredMetadata map[string]string
+	Methods          []func([]*types.ScalarValue, map[string]string) ([]*types.ScalarValue, error)
+}
+
+// ExtensionConfig is an application that is meant to extend the functionality
 // of Kwil.  It is a containerized service that is meant to be able to
 // execute arbitrary code.
-type Extension struct {
+type ExtensionConfig struct {
 	// Configs is a map of configuration values that are passed to the
 	// extension when it is started. It maps the name of the configuration
 	// to the default value of the configuration.
@@ -38,12 +44,6 @@ type Method struct {
 	// It will automatically be lowercased.
 	Name string
 
-	// RequiredInputs is a list of data types that are required to be
-	// provided to the method for execution.
-	// For example, for a method "add(a, b)", RequiredInputs would be
-	// []types.ScalarType{types.ScalarType_INT, types.ScalarType_INT}.
-	RequiredInputs []types.ScalarType
-
 	// Function is the function that is executed when the method is called.
 	// It is provided the inputs to the method as a list of ScalarValues.
 	// It is expected to return an array of ScalarValues.
@@ -63,4 +63,8 @@ func (m *Method) canExecute(inputs []*types.ScalarValue) error {
 	}
 
 	return nil
+}
+
+type UserExtension interface {
+	Configure(map[string]string) error
 }

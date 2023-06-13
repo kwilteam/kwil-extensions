@@ -19,8 +19,6 @@ func (s ScalarType) String() string {
 
 func ScalarTypeFromString(s string) (ScalarType, error) {
 	switch strings.ToUpper(s) {
-	case "NULL":
-		return ScalarType_NULL, nil
 	case "STRING":
 		return ScalarType_STRING, nil
 	case "INT":
