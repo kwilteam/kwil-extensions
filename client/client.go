@@ -56,7 +56,7 @@ func (c *ExtensionClient) ListMethods(ctx context.Context) ([]string, error) {
 	return resp.Methods, nil
 }
 
-func (c *ExtensionClient) CallMethod(ctx types.ExecutionContext, method string, args ...any) ([]any, error) {
+func (c *ExtensionClient) CallMethod(ctx *types.ExecutionContext, method string, args ...any) ([]any, error) {
 	var encodedArgs []*types.ScalarValue
 	for _, arg := range args {
 		scalarVal, err := types.NewScalarValue(arg)
