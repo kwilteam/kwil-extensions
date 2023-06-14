@@ -13,6 +13,9 @@ service ExtensionService {
 
     // Execute is used to execute a method provided by the extension.
     rpc Execute(ExecuteRequest) returns (ExecuteResponse) {}
+
+    // GetMetadata is used to get the required metadata for a method.
+    rpc GetMetadata(GetMetadataRequest) returns (GetMetadataResponse) {}
 }
 
 message ConfigureRequest {
@@ -45,4 +48,11 @@ message ExecuteResponse {
 message ScalarValue {
     string type = 1;
     bytes value = 2;
+}
+
+message GetMetadataRequest {
+}
+
+message GetMetadataResponse {
+    map<string, string> metadata = 1; // maps the name to the default value, if it exists
 }

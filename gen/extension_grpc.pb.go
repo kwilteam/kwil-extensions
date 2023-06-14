@@ -29,6 +29,8 @@ type ExtensionServiceClient interface {
 	ListMethods(ctx context.Context, in *ListMethodsRequest, opts ...grpc.CallOption) (*ListMethodsResponse, error)
 	// Execute is used to execute a method provided by the extension.
 	Execute(ctx context.Context, in *ExecuteRequest, opts ...grpc.CallOption) (*ExecuteResponse, error)
+	// GetMetadata is used to get the required metadata for a method.
+	GetMetadata(ctx context.Context, in *GetMetadataRequest, opts ...grpc.CallOption) (*GetMetadataResponse, error)
 }
 
 type extensionServiceClient struct {
@@ -66,6 +68,15 @@ func (c *extensionServiceClient) Execute(ctx context.Context, in *ExecuteRequest
 	return out, nil
 }
 
+func (c *extensionServiceClient) GetMetadata(ctx context.Context, in *GetMetadataRequest, opts ...grpc.CallOption) (*GetMetadataResponse, error) {
+	out := new(GetMetadataResponse)
+	err := c.cc.Invoke(ctx, "/extension.ExtensionService/GetMetadata", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ExtensionServiceServer is the server API for ExtensionService service.
 // All implementations must embed UnimplementedExtensionServiceServer
 // for forward compatibility
@@ -77,6 +88,8 @@ type ExtensionServiceServer interface {
 	ListMethods(context.Context, *ListMethodsRequest) (*ListMethodsResponse, error)
 	// Execute is used to execute a method provided by the extension.
 	Execute(context.Context, *ExecuteRequest) (*ExecuteResponse, error)
+	// GetMetadata is used to get the required metadata for a method.
+	GetMetadata(context.Context, *GetMetadataRequest) (*GetMetadataResponse, error)
 	mustEmbedUnimplementedExtensionServiceServer()
 }
 
@@ -92,6 +105,9 @@ func (UnimplementedExtensionServiceServer) ListMethods(context.Context, *ListMet
 }
 func (UnimplementedExtensionServiceServer) Execute(context.Context, *ExecuteRequest) (*ExecuteResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Execute not implemented")
+}
+func (UnimplementedExtensionServiceServer) GetMetadata(context.Context, *GetMetadataRequest) (*GetMetadataResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetMetadata not implemented")
 }
 func (UnimplementedExtensionServiceServer) mustEmbedUnimplementedExtensionServiceServer() {}
 
@@ -160,6 +176,24 @@ func _ExtensionService_Execute_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ExtensionService_GetMetadata_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMetadataRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ExtensionServiceServer).GetMetadata(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/extension.ExtensionService/GetMetadata",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ExtensionServiceServer).GetMetadata(ctx, req.(*GetMetadataRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ExtensionService_ServiceDesc is the grpc.ServiceDesc for ExtensionService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -178,6 +212,10 @@ var ExtensionService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Execute",
 			Handler:    _ExtensionService_Execute_Handler,
+		},
+		{
+			MethodName: "GetMetadata",
+			Handler:    _ExtensionService_GetMetadata_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

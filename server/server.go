@@ -108,6 +108,12 @@ func (s *Server) Execute(ctx context.Context, req *gen.ExecuteRequest) (*gen.Exe
 	}, nil
 }
 
+func (s *Server) GetMetadata(ctx context.Context, req *gen.GetMetadataRequest) (*gen.GetMetadataResponse, error) {
+	return &gen.GetMetadataResponse{
+		Metadata: s.RequiredMetadata,
+	}, nil
+}
+
 // mergeStringMaps merges two maps of strings.  If a key exists in both maps,
 // the value from the second map is used.
 // If a value in the first map is an empty string, the value from the second
