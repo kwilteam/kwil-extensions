@@ -93,3 +93,12 @@ func (c *ExtensionClient) CallMethod(ctx types.ExecutionContext, method string, 
 
 	return outputs, nil
 }
+
+func (c *ExtensionClient) GetMetadata(ctx context.Context) (map[string]string, error) {
+	resp, err := c.extClient.GetMetadata(ctx, &gen.GetMetadataRequest{})
+	if err != nil {
+		return nil, err
+	}
+
+	return resp.Metadata, nil
+}
