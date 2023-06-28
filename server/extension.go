@@ -11,5 +11,5 @@ type MethodFunc func(ctx *types.ExecutionContext, inputs ...*types.ScalarValue) 
 type ExtensionConfig struct {
 	ConfigFunc       ConfigFunc
 	RequiredMetadata map[string]string
-	Methods          []MethodFunc
+	Methods          map[string]MethodFunc
 }
