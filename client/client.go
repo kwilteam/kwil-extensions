@@ -23,7 +23,7 @@ type ExtensionClient struct {
 
 func NewExtensionClient(ctx context.Context, target string, opts ...ClientOpt) (*ExtensionClient, error) {
 	extClient := &ExtensionClient{
-		timeout: 1 * time.Second,
+		timeout: time.Duration(5 * time.Second),
 	}
 
 	for _, opt := range opts {
