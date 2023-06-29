@@ -30,12 +30,12 @@ func NewExtensionClient(ctx context.Context, target string, opts ...ClientOpt) (
 		opt(extClient)
 	}
 
-	// dialCtx, cancel := extClient.setTimeout(ctx)
-	// defer cancel()
+	dialCtx, cancel := extClient.setTimeout(ctx)
+	defer cancel()
 
 	dialOpts := extClient.grpcDialOpts()
 
-	grpcClient, err := grpc.DialContext(ctx, target, dialOpts...)
+	grpcClient, err := grpc.DialContext(dialCtx, target, dialOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -51,8 +51,8 @@ func (c *ExtensionClient) Close() error {
 }
 
 func (c *ExtensionClient) Configure(ctx context.Context, config map[string]string) error {
-	ctx, cancel := c.setTimeout(ctx)
-	defer cancel()
+	// ctx, cancel := c.setTimeout(ctx)
+	// defer cancel()
 
 	success, err := c.extClient.Configure(ctx, &gen.ConfigureRequest{
 		Config: config,
@@ -69,8 +69,8 @@ func (c *ExtensionClient) Configure(ctx context.Context, config map[string]strin
 }
 
 func (c *ExtensionClient) ListMethods(ctx context.Context) ([]string, error) {
-	ctx, cancel := c.setTimeout(ctx)
-	defer cancel()
+	// ctx, cancel := c.setTimeout(ctx)
+	// defer cancel()
 
 	resp, err := c.extClient.ListMethods(ctx, &gen.ListMethodsRequest{})
 	if err != nil {
@@ -81,8 +81,8 @@ func (c *ExtensionClient) ListMethods(ctx context.Context) ([]string, error) {
 }
 
 func (c *ExtensionClient) CallMethod(execCtx *types.ExecutionContext, method string, args ...any) ([]any, error) {
-	ctx, cancel := c.setTimeout(execCtx.Ctx)
-	defer cancel()
+	// ctx, cancel := c.setTimeout(execCtx.Ctx)
+	// defer cancel()
 
 	var encodedArgs []*types.ScalarValue
 	for _, arg := range args {
@@ -99,7 +99,7 @@ func (c *ExtensionClient) CallMethod(execCtx *types.ExecutionContext, method str
 		return nil, fmt.Errorf("error converting arguments: %s", err.Error())
 	}
 
-	resp, err := c.extClient.Execute(ctx, &gen.ExecuteRequest{
+	resp, err := c.extClient.Execute(execCtx.Ctx, &gen.ExecuteRequest{
 		Name:     strings.ToLower(method),
 		Args:     pbArgs,
 		Metadata: execCtx.Metadata,
@@ -122,8 +122,8 @@ func (c *ExtensionClient) CallMethod(execCtx *types.ExecutionContext, method str
 }
 
 func (c *ExtensionClient) GetMetadata(ctx context.Context) (map[string]string, error) {
-	ctx, cancel := c.setTimeout(ctx)
-	defer cancel()
+	// ctx, cancel := c.setTimeout(ctx)
+	// defer cancel()
 
 	resp, err := c.extClient.GetMetadata(ctx, &gen.GetMetadataRequest{})
 	if err != nil {
