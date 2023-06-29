@@ -13,16 +13,22 @@ import (
 type Server struct {
 	gen.UnimplementedExtensionServiceServer
 
-	Name             string
+	name             string
 	Methods          map[string]MethodFunc
 	RequiredMetadata map[string]string
 
 	configured bool
 }
 
+func (s *Server) Name(ctx context.Context, req *gen.NameRequest) (*gen.NameResponse, error) {
+	return &gen.NameResponse{
+		Name: s.name,
+	}, nil
+}
+
 func NewExtensionServer(ext *ExtensionConfig) (*Server, error) {
 	return &Server{
-		Name:             ext.Name,
+		name:             ext.Name,
 		Methods:          ext.Methods,
 		RequiredMetadata: ext.RequiredMetadata,
 	}, nil

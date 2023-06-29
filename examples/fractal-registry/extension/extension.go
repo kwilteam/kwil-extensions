@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
+
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
@@ -47,7 +48,7 @@ func NewFractalExt(rpcURL string) (*FractalExt, error) {
 
 func (e *FractalExt) BuildServer() (*server.Server, error) {
 	return builder.Builder().
-		WithConfigFunc(e.Configure).
+		Named(e.Name()).
 		WithRequiredMetadata(requiredMetadata).
 		WithMethods(
 			map[string]server.MethodFunc{
@@ -85,6 +86,10 @@ func (e *FractalExt) Configure(conf map[string]string) error {
 	e.Registry = instance
 
 	return nil
+}
+
+func (e *FractalExt) Name() string {
+	return "idos"
 }
 
 func (e *FractalExt) GetBlockHeight(ctx *types.ExecutionContext, _ ...*types.ScalarValue) ([]*types.ScalarValue, error) {
