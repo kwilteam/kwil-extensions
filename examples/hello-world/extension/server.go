@@ -11,8 +11,8 @@ func NewHelloWorldExtension() (*server.Server, error) {
 	return builder.Builder().
 		WithConfigFunc(ext.Configure).
 		WithRequiredMetadata(requiredMetadata).
-		WithMethods(
-			ext.SayHello,
-			ext.SayGoodbye,
-		).Build()
+		WithMethods(map[string]server.MethodFunc{
+			"hello":   ext.SayHello,
+			"goodbye": ext.SayGoodbye,
+		}).Build()
 }
