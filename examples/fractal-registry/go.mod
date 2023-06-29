@@ -7,7 +7,7 @@ require (
 	github.com/ethereum/go-ethereum v1.12.0
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.0.0-rc.5
 	github.com/hashicorp/golang-lru/v2 v2.0.4
-	github.com/kwilteam/kwil-extensions v0.0.0-20230629203110-f208694dccbc
+	github.com/kwilteam/kwil-extensions v0.0.0-20230629213551-4c338c1f515e
 	github.com/stretchr/testify v1.8.1
 	google.golang.org/grpc v1.55.0
 )

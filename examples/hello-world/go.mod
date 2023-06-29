@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.0.0-rc.5
-	github.com/kwilteam/kwil-extensions v0.0.0-20230628201628-b36842683e6a
+	github.com/kwilteam/kwil-extensions v0.0.0-20230629213551-4c338c1f515e
 	google.golang.org/grpc v1.55.0
 )
 
