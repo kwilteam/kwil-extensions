@@ -63,8 +63,8 @@ github.com/jackpal/go-nat-pmp v1.0.2 h1:KzKSgb7qkJvOUTqYl9/Hg/me3pWgBmERKrTGD7Bd
 github.com/klauspost/compress v1.15.15 h1:EF27CXIuDsYJ6mmvtBRlEuB2UVOqHG1tAXgZ7yIO+lw=
 github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=
 github.com/kr/text v0.2.0 h1:5Nx0Ya0ZqY2ygV366QzturHI13Jq95ApcVaJBhpS+AY=
-github.com/kwilteam/kwil-extensions v0.0.0-20230628201628-b36842683e6a h1:k+ros81ja2Ej6assYOv9oLe1AZUG+twPyPU0cPM0KVo=
-github.com/kwilteam/kwil-extensions v0.0.0-20230628201628-b36842683e6a/go.mod h1:crHs3UdoDH0KnuooZvh4zpbUqc30DuixEs9wE03V1Zo=
+github.com/kwilteam/kwil-extensions v0.0.0-20230629203110-f208694dccbc h1:Hht4BggtLJgCBy0SIMCsKMBw7/M9DmbDztq1vSfY/rc=
+github.com/kwilteam/kwil-extensions v0.0.0-20230629203110-f208694dccbc/go.mod h1:crHs3UdoDH0KnuooZvh4zpbUqc30DuixEs9wE03V1Zo=
 github.com/kylelemons/godebug v1.1.0 h1:RPNrshWIDI6G2gRW9EHilWtl7Z6Sb1BR0xunSBf0SNc=
 github.com/mattn/go-colorable v0.1.13 h1:fFA4WZxdEF4tXPZVKMLwD8oUnCTTo08duU7wxecdEvA=
 github.com/mattn/go-isatty v0.0.16 h1:bq3VjFmv/sOjHtdEhmkEV4x1AJtvUvOJ2PFAZ5+peKQ=
