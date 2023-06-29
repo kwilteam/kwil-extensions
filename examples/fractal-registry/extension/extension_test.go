@@ -3,6 +3,7 @@ package extension
 import (
 	"context"
 	"fmt"
+	"github.com/caarlos0/env/v8"
 	"github.com/kwilteam/kwil-extensions/client"
 	"github.com/kwilteam/kwil-extensions/types"
 	"github.com/stretchr/testify/assert"
@@ -56,18 +57,18 @@ func TestFractalExt_Behavior(t *testing.T) {
 		name   string
 		fields fields
 	}{
-		//{
-		//	name: "goerli",
-		//	fields: fields{
-		//		RegistryAddress: "0x4D9DE1bb481B9dA37A7a7E3a07F6f60654fEe7BB",
-		//	},
-		//},
 		{
-			name: "ganache",
+			name: "goerli",
 			fields: fields{
-				RegistryAddress: "0x274b028b03A250cA03644E6c578D81f019eE1323",
+				RegistryAddress: "0x4D9DE1bb481B9dA37A7a7E3a07F6f60654fEe7BB",
 			},
 		},
+		//{
+		//	name: "ganache",
+		//	fields: fields{
+		//		RegistryAddress: "0x274b028b03A250cA03644E6c578D81f019eE1323",
+		//	},
+		//},
 	}
 
 	const testAddress = "0x640568976c2CDc8789E44B39369D5Bc44B1e6Ad7"
@@ -111,10 +112,10 @@ func TestFractalExt_Behavior(t *testing.T) {
 			assert.NoError(ttt, err)
 			fmt.Println("is user in list:", got[0].Int())
 
-			//
-			got, err = srv.Methods["grants_for"](ctx)
-			assert.NoError(ttt, err)
-			fmt.Println("grants for:", got[0].Int())
+			//// only for ganache
+			//got, err = srv.Methods["grants_for"](ctx)
+			//assert.NoError(ttt, err)
+			//fmt.Println("grants for:", got[0].Int())
 		})
 	}
 }
