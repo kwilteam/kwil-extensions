@@ -6,7 +6,7 @@ require (
 	github.com/caarlos0/env/v8 v8.0.0
 	github.com/ethereum/go-ethereum v1.12.0
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.0.0-rc.5
-	github.com/kwilteam/kwil-extensions v0.0.0-20230629204046-d0ba9a5bcf84
+	github.com/kwilteam/kwil-extensions v0.0.0-20230629210157-9a34eb9d551c
 	github.com/stretchr/testify v1.8.1
 	google.golang.org/grpc v1.55.0
 )
