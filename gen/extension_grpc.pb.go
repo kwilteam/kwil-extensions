@@ -19,7 +19,7 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	ExtensionService_Configure_FullMethodName   = "/extension.ExtensionService/Configure"
+	ExtensionService_Name_FullMethodName        = "/extension.ExtensionService/Name"
 	ExtensionService_ListMethods_FullMethodName = "/extension.ExtensionService/ListMethods"
 	ExtensionService_Execute_FullMethodName     = "/extension.ExtensionService/Execute"
 	ExtensionService_GetMetadata_FullMethodName = "/extension.ExtensionService/GetMetadata"
@@ -29,9 +29,8 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ExtensionServiceClient interface {
-	// Configure is called to give the extension variables necessary to run.
-	// Ex: An Eth RPC extension would need the URL of the RPC server.
-	Configure(ctx context.Context, in *ConfigureRequest, opts ...grpc.CallOption) (*ConfigureResponse, error)
+	// Name is used to get the name of the extension.
+	Name(ctx context.Context, in *NameRequest, opts ...grpc.CallOption) (*NameResponse, error)
 	// ListMethods is used to list the methods which the extension provides.
 	ListMethods(ctx context.Context, in *ListMethodsRequest, opts ...grpc.CallOption) (*ListMethodsResponse, error)
 	// Execute is used to execute a method provided by the extension.
@@ -48,9 +47,9 @@ func NewExtensionServiceClient(cc grpc.ClientConnInterface) ExtensionServiceClie
 	return &extensionServiceClient{cc}
 }
 
-func (c *extensionServiceClient) Configure(ctx context.Context, in *ConfigureRequest, opts ...grpc.CallOption) (*ConfigureResponse, error) {
-	out := new(ConfigureResponse)
-	err := c.cc.Invoke(ctx, ExtensionService_Configure_FullMethodName, in, out, opts...)
+func (c *extensionServiceClient) Name(ctx context.Context, in *NameRequest, opts ...grpc.CallOption) (*NameResponse, error) {
+	out := new(NameResponse)
+	err := c.cc.Invoke(ctx, ExtensionService_Name_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -88,9 +87,8 @@ func (c *extensionServiceClient) GetMetadata(ctx context.Context, in *GetMetadat
 // All implementations must embed UnimplementedExtensionServiceServer
 // for forward compatibility
 type ExtensionServiceServer interface {
-	// Configure is called to give the extension variables necessary to run.
-	// Ex: An Eth RPC extension would need the URL of the RPC server.
-	Configure(context.Context, *ConfigureRequest) (*ConfigureResponse, error)
+	// Name is used to get the name of the extension.
+	Name(context.Context, *NameRequest) (*NameResponse, error)
 	// ListMethods is used to list the methods which the extension provides.
 	ListMethods(context.Context, *ListMethodsRequest) (*ListMethodsResponse, error)
 	// Execute is used to execute a method provided by the extension.
@@ -104,8 +102,8 @@ type ExtensionServiceServer interface {
 type UnimplementedExtensionServiceServer struct {
 }
 
-func (UnimplementedExtensionServiceServer) Configure(context.Context, *ConfigureRequest) (*ConfigureResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Configure not implemented")
+func (UnimplementedExtensionServiceServer) Name(context.Context, *NameRequest) (*NameResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Name not implemented")
 }
 func (UnimplementedExtensionServiceServer) ListMethods(context.Context, *ListMethodsRequest) (*ListMethodsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListMethods not implemented")
@@ -129,20 +127,20 @@ func RegisterExtensionServiceServer(s grpc.ServiceRegistrar, srv ExtensionServic
 	s.RegisterService(&ExtensionService_ServiceDesc, srv)
 }
 
-func _ExtensionService_Configure_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ConfigureRequest)
+func _ExtensionService_Name_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(NameRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ExtensionServiceServer).Configure(ctx, in)
+		return srv.(ExtensionServiceServer).Name(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ExtensionService_Configure_FullMethodName,
+		FullMethod: ExtensionService_Name_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ExtensionServiceServer).Configure(ctx, req.(*ConfigureRequest))
+		return srv.(ExtensionServiceServer).Name(ctx, req.(*NameRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -209,8 +207,8 @@ var ExtensionService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*ExtensionServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Configure",
-			Handler:    _ExtensionService_Configure_Handler,
+			MethodName: "Name",
+			Handler:    _ExtensionService_Name_Handler,
 		},
 		{
 			MethodName: "ListMethods",

@@ -14,18 +14,8 @@ var requiredMetadata = map[string]string{
 	"punctuation": "",
 }
 
-// Taking the user provided config, set the greeting and punctuation.
-// In this example, greeting is optional and defaults to "Hello".
-// Punctuation is required.
-func (e *HelloWorldExt) Configure(newConfig map[string]string) error {
-	greeting, ok := newConfig["greeting"]
-	if !ok {
-		return fmt.Errorf("greeting config not provided")
-	}
-
-	e.greeting = greeting
-
-	return nil
+func (e *HelloWorldExt) Name() string {
+	return "hello-world"
 }
 
 func (h *HelloWorldExt) SayHello(ctx *types.ExecutionContext, values ...*types.ScalarValue) ([]*types.ScalarValue, error) {
