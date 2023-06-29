@@ -10,4 +10,4 @@ tasks:
   dockerize:hello-world:
     cmds:
       - | 
-        docker build -t hello-world-extenstion ./examples/hello-world
+        docker build -t hello-world-extension ./examples/hello-world

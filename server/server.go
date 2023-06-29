@@ -3,8 +3,6 @@ package server
 import (
 	"context"
 	"fmt"
-	"reflect"
-	"runtime"
 	"strings"
 
 	gen "github.com/kwilteam/kwil-extensions/gen"
@@ -23,26 +21,11 @@ type Server struct {
 }
 
 func NewExtensionServer(ext *ExtensionConfig) (*Server, error) {
-	mappedMethods := make(map[string]MethodFunc)
-	for _, method := range ext.Methods {
-		name := strings.ToLower(getFunctionName(method))
-		_, ok := mappedMethods[name]
-		if ok {
-			return nil, fmt.Errorf("duplicate method name: %s", name)
-		}
-
-		mappedMethods[name] = method
-	}
-
 	return &Server{
 		ConfigFunc:       ext.ConfigFunc,
-		Methods:          mappedMethods,
+		Methods:          ext.Methods,
 		RequiredMetadata: ext.RequiredMetadata,
 	}, nil
-}
-
-func getFunctionName(f interface{}) string {
-	return runtime.FuncForPC(reflect.ValueOf(f).Pointer()).Name()
 }
 
 func (s *Server) Configure(ctx context.Context, req *gen.ConfigureRequest) (*gen.ConfigureResponse, error) {

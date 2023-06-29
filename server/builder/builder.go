@@ -23,7 +23,7 @@ type ExtensionMetadataBuilder interface {
 }
 
 type ExtensionMethodBuilder interface {
-	WithMethods(...server.MethodFunc) ExtensionBuildBuilder
+	WithMethods(map[string]server.MethodFunc) ExtensionBuildBuilder
 }
 
 type ExtensionBuildBuilder interface {
@@ -40,7 +40,7 @@ func (b *ExtensionBuilder) WithRequiredMetadata(requiredMetadata map[string]stri
 	return b
 }
 
-func (b *ExtensionBuilder) WithMethods(methods ...server.MethodFunc) ExtensionBuildBuilder {
+func (b *ExtensionBuilder) WithMethods(methods map[string]server.MethodFunc) ExtensionBuildBuilder {
 	b.config.Methods = methods
 	return b
 }

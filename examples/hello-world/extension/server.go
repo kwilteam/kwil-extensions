@@ -12,7 +12,9 @@ func NewHelloWorldExtension() (*server.Server, error) {
 		WithConfigFunc(ext.Configure).
 		WithRequiredMetadata(requiredMetadata).
 		WithMethods(
-			ext.SayHello,
-			ext.SayGoodbye,
+			map[string]server.MethodFunc{
+				"hello":   ext.SayHello,
+				"goodbye": ext.SayGoodbye,
+			},
 		).Build()
 }
