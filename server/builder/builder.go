@@ -4,7 +4,7 @@ import (
 	"github.com/kwilteam/kwil-extensions/server"
 )
 
-func Builder() ExtensionConfigFuncBuilder {
+func Builder() ExtensionNameBuilder {
 	return &ExtensionBuilder{
 		config: &server.ExtensionConfig{},
 	}
@@ -14,8 +14,8 @@ type ExtensionBuilder struct {
 	config *server.ExtensionConfig
 }
 
-type ExtensionConfigFuncBuilder interface {
-	WithConfigFunc(server.ConfigFunc) ExtensionMetadataBuilder
+type ExtensionNameBuilder interface {
+	Named(string) ExtensionMetadataBuilder
 }
 
 type ExtensionMetadataBuilder interface {
@@ -30,8 +30,8 @@ type ExtensionBuildBuilder interface {
 	Build() (*server.Server, error)
 }
 
-func (b *ExtensionBuilder) WithConfigFunc(configFunc server.ConfigFunc) ExtensionMetadataBuilder {
-	b.config.ConfigFunc = configFunc
+func (b *ExtensionBuilder) Named(name string) ExtensionMetadataBuilder {
+	b.config.Name = name
 	return b
 }
 

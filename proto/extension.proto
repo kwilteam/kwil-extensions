@@ -4,9 +4,8 @@ package extension;
 option go_package = "github.com/kwil-io/core/proto/extension";
 
 service ExtensionService {
-    // Configure is called to give the extension variables necessary to run.
-    // Ex: An Eth RPC extension would need the URL of the RPC server.
-    rpc Configure(ConfigureRequest) returns (ConfigureResponse) {}
+    // Name is used to get the name of the extension.
+    rpc Name(NameRequest) returns (NameResponse) {}
 
     // ListMethods is used to list the methods which the extension provides.
     rpc ListMethods(ListMethodsRequest) returns (ListMethodsResponse) {}
@@ -16,6 +15,13 @@ service ExtensionService {
 
     // GetMetadata is used to get the required metadata for a method.
     rpc GetMetadata(GetMetadataRequest) returns (GetMetadataResponse) {}
+}
+
+message NameRequest {
+}
+
+message NameResponse {
+    string name = 1;
 }
 
 message ConfigureRequest {

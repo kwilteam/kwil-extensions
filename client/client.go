@@ -50,22 +50,16 @@ func (c *ExtensionClient) Close() error {
 	return c.conn.Close()
 }
 
-func (c *ExtensionClient) Configure(ctx context.Context, config map[string]string) error {
+func (c *ExtensionClient) GetName(ctx context.Context) (string, error) {
 	// ctx, cancel := c.setTimeout(ctx)
 	// defer cancel()
 
-	success, err := c.extClient.Configure(ctx, &gen.ConfigureRequest{
-		Config: config,
-	})
+	resp, err := c.extClient.Name(ctx, &gen.NameRequest{})
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	if !success.Success {
-		return fmt.Errorf("failed to configure extension. the extension did not provide a reason")
-	}
-
-	return nil
+	return resp.Name, nil
 }
 
 func (c *ExtensionClient) ListMethods(ctx context.Context) ([]string, error) {

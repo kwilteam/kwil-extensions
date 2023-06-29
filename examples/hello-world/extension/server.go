@@ -9,7 +9,7 @@ func NewHelloWorldExtension() (*server.Server, error) {
 	ext := &HelloWorldExt{}
 
 	return builder.Builder().
-		WithConfigFunc(ext.Configure).
+		Named(ext.Name()).
 		WithRequiredMetadata(requiredMetadata).
 		WithMethods(
 			map[string]server.MethodFunc{

@@ -13,7 +13,7 @@ import (
 type Server struct {
 	gen.UnimplementedExtensionServiceServer
 
-	ConfigFunc       ConfigFunc
+	Name             string
 	Methods          map[string]MethodFunc
 	RequiredMetadata map[string]string
 
@@ -22,22 +22,9 @@ type Server struct {
 
 func NewExtensionServer(ext *ExtensionConfig) (*Server, error) {
 	return &Server{
-		ConfigFunc:       ext.ConfigFunc,
+		Name:             ext.Name,
 		Methods:          ext.Methods,
 		RequiredMetadata: ext.RequiredMetadata,
-	}, nil
-}
-
-func (s *Server) Configure(ctx context.Context, req *gen.ConfigureRequest) (*gen.ConfigureResponse, error) {
-	err := s.ConfigFunc(req.Config)
-	if err != nil {
-		return nil, fmt.Errorf("error configuring extension: %s", err.Error())
-	}
-
-	s.configured = true
-
-	return &gen.ConfigureResponse{
-		Success: true,
 	}, nil
 }
 
