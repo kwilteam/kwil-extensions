@@ -53,10 +53,6 @@ func (s *Server) ListMethods(ctx context.Context, req *gen.ListMethodsRequest) (
 }
 
 func (s *Server) Execute(ctx context.Context, req *gen.ExecuteRequest) (*gen.ExecuteResponse, error) {
-	if !s.configured {
-		return nil, fmt.Errorf("extension has not been configured by node")
-	}
-
 	method, ok := s.Methods[strings.ToLower(req.Name)]
 	if !ok {
 		return nil, fmt.Errorf("method not found: %s", req.Name)
