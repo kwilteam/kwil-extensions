@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
-
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
@@ -15,11 +14,24 @@ import (
 	"github.com/kwilteam/kwil-extensions/types"
 )
 
+type metadata map[string]string
+
+func (m metadata) RegistryAddress() string {
+	return m["registry_address"]
+}
+
+func (m metadata) ChainName() string {
+	return m["chain_name"]
+}
+
+var requiredMetadata = map[string]string{
+	"registry_address": "",
+	"chain_name":       "goerli",
+}
+
 type FractalExt struct {
-	RPCURL          string
-	eth             *ethclient.Client
-	RegistryAddress common.Address
-	Registry        *registry.Registry
+	RPCURL string
+	eth    *ethclient.Client
 }
 
 func NewFractalExt(rpcURL string) (*FractalExt, error) {
@@ -71,25 +83,50 @@ func (e *FractalExt) BuildServer() (*server.Server, error) {
 			}).Build()
 }
 
-func (e *FractalExt) Configure(conf map[string]string) error {
-	registryAddressStr, ok := conf["registry_address"]
-	if !ok {
-		return fmt.Errorf("registry_address is not set")
-	}
-
-	e.RegistryAddress = common.HexToAddress(registryAddressStr)
-
-	instance, err := registry.NewRegistry(e.RegistryAddress, e.eth)
-	if err != nil {
-		return fmt.Errorf("create registry failed: %w", err)
-	}
-	e.Registry = instance
-
-	return nil
-}
-
 func (e *FractalExt) Name() string {
 	return "idos"
+}
+
+func (e *FractalExt) getMetadata(ctx *types.ExecutionContext) (metadata, error) {
+	metadata := metadata{}
+	for k, v := range requiredMetadata {
+		if val, ok := ctx.Metadata[k]; ok {
+			metadata[k] = val
+		} else {
+			if v == "" {
+				return nil, fmt.Errorf("metadata %s is required", k)
+			}
+			metadata[k] = v
+		}
+	}
+	return metadata, nil
+}
+
+func (e *FractalExt) getContract(ctx *types.ExecutionContext) (*registry.Registry, error) {
+	m, err := e.getMetadata(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("get metadata failed: %w", err)
+	}
+
+	// TODO: based on chain name, using different connection(rpc_url)
+	contract, err := e.GetRegistryInstance(m.ChainName(), m.RegistryAddress())
+	if err != nil {
+		return nil, fmt.Errorf("get registry instance failed: %w", err)
+	}
+
+	return contract, nil
+}
+
+func (e *FractalExt) GetRegistryInstance(_ string, address string) (*registry.Registry, error) {
+	instance, err := registry.NewRegistry(common.HexToAddress(address), e.eth)
+	if err != nil {
+		return nil, fmt.Errorf("create registry failed: %w", err)
+	}
+	return instance, nil
+}
+
+func (e *FractalExt) Configure(_ map[string]string) error {
+	return nil
 }
 
 func (e *FractalExt) GetBlockHeight(ctx *types.ExecutionContext, _ ...*types.ScalarValue) ([]*types.ScalarValue, error) {
@@ -101,9 +138,15 @@ func (e *FractalExt) GetBlockHeight(ctx *types.ExecutionContext, _ ...*types.Sca
 	return encodeScalarValues(num)
 }
 
-func (e *FractalExt) GetFractalID(_ *types.ExecutionContext, values ...*types.ScalarValue) ([]*types.ScalarValue, error) {
+func (e *FractalExt) GetFractalID(ctx *types.ExecutionContext, values ...*types.ScalarValue) ([]*types.ScalarValue, error) {
+	// TODO: make it a fixture
+	contract, err := e.getContract(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	walletAddr := values[0].String()
-	fractalID, err := e.Registry.GetFractalId(&bind.CallOpts{}, common.HexToAddress(walletAddr))
+	fractalID, err := contract.GetFractalId(&bind.CallOpts{}, common.HexToAddress(walletAddr))
 	if err != nil {
 		return nil, fmt.Errorf("get fractal id failed: %w", err)
 	}
@@ -112,7 +155,12 @@ func (e *FractalExt) GetFractalID(_ *types.ExecutionContext, values ...*types.Sc
 	return encodeScalarValues(fractalIDStr)
 }
 
-func (e *FractalExt) IsUserInList(_ *types.ExecutionContext, values ...*types.ScalarValue) ([]*types.ScalarValue, error) {
+func (e *FractalExt) IsUserInList(ctx *types.ExecutionContext, values ...*types.ScalarValue) ([]*types.ScalarValue, error) {
+	contract, err := e.getContract(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	fractalID := values[0].String()
 	listID := values[1].String()
 
@@ -123,7 +171,7 @@ func (e *FractalExt) IsUserInList(_ *types.ExecutionContext, values ...*types.Sc
 
 	fractalIDByte32 := *abi.ConvertType(fractalIDByte, new([32]byte)).(*[32]byte)
 
-	presence, err := e.Registry.IsUserInList(&bind.CallOpts{}, fractalIDByte32, listID)
+	presence, err := contract.IsUserInList(&bind.CallOpts{}, fractalIDByte32, listID)
 	if err != nil {
 		return nil, fmt.Errorf("get fractal id failed: %w", err)
 	}
@@ -139,8 +187,13 @@ func (e *FractalExt) IsUserInList(_ *types.ExecutionContext, values ...*types.Sc
 	return encodeScalarValues(exist)
 }
 
-func (e *FractalExt) GrantsFor(_ *types.ExecutionContext, _ ...*types.ScalarValue) ([]*types.ScalarValue, error) {
-	grantList, err := e.Registry.GrantsFor(&bind.CallOpts{})
+func (e *FractalExt) GrantsFor(ctx *types.ExecutionContext, _ ...*types.ScalarValue) ([]*types.ScalarValue, error) {
+	contract, err := e.getContract(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	grantList, err := contract.GrantsFor(&bind.CallOpts{})
 	if err != nil {
 		return nil, fmt.Errorf("get grants for failed: %w", err)
 	}
@@ -168,5 +221,3 @@ func encodeScalarValues(values ...any) ([]*types.ScalarValue, error) {
 
 	return scalarValues, nil
 }
-
-var requiredMetadata = map[string]string{}

@@ -1,3 +1,5 @@
+github.com/cstockton/go-conv v1.0.0 h1:zj/q/0MpQ/97XfiC9glWiohO8lhgR4TTnHYZifLTv6I=
+github.com/cstockton/go-conv v1.0.0/go.mod h1:HuiHkkRgOA0IoBNPC7ysG7kNpjDYlgM7Kj62yQPxjy4=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
@@ -8,8 +10,8 @@ github.com/google/go-cmp v0.5.5/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/
 github.com/google/go-cmp v0.5.9 h1:O2Tfq5qg4qc4AmwVlvv0oLiVAGB7enBSJ2x2DqQFi38=
 github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.0.0-rc.5 h1:3IZOAnD058zZllQTZNBioTlrzrBG/IjpiZ133IEtusM=
 github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.0.0-rc.5/go.mod h1:xbKERva94Pw2cPen0s79J3uXmGzbbpDYFBFDlZ4mV/w=
-github.com/kwilteam/kwil-extensions v0.0.0-20230613195423-701f083e3a47 h1:SVzBbNJBq+j2F7lXLB/bZ/Wj6wWOQddHSJOxqvsykwQ=
-github.com/kwilteam/kwil-extensions v0.0.0-20230613195423-701f083e3a47/go.mod h1:rMlcT8A0J4W44NNvtH9LM2l7apVJcCJGK7s8fO72niE=
+github.com/kwilteam/kwil-extensions v0.0.0-20230628201628-b36842683e6a h1:k+ros81ja2Ej6assYOv9oLe1AZUG+twPyPU0cPM0KVo=
+github.com/kwilteam/kwil-extensions v0.0.0-20230628201628-b36842683e6a/go.mod h1:crHs3UdoDH0KnuooZvh4zpbUqc30DuixEs9wE03V1Zo=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
