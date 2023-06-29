@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
+
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
@@ -123,10 +124,6 @@ func (e *FractalExt) GetRegistryInstance(_ string, address string) (*registry.Re
 		return nil, fmt.Errorf("create registry failed: %w", err)
 	}
 	return instance, nil
-}
-
-func (e *FractalExt) Configure(_ map[string]string) error {
-	return nil
 }
 
 func (e *FractalExt) GetBlockHeight(ctx *types.ExecutionContext, _ ...*types.ScalarValue) ([]*types.ScalarValue, error) {
