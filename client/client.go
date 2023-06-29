@@ -30,10 +30,12 @@ func NewExtensionClient(ctx context.Context, target string, opts ...ClientOpt) (
 		opt(extClient)
 	}
 
-	ctx, cancel := extClient.setTimeout(ctx)
+	dialCtx, cancel := extClient.setTimeout(ctx)
 	defer cancel()
 
-	grpcClient, err := grpc.DialContext(ctx, target, extClient.grpcDialOpts()...)
+	dialOpts := extClient.grpcDialOpts()
+
+	grpcClient, err := grpc.DialContext(dialCtx, target, dialOpts...)
 	if err != nil {
 		return nil, err
 	}
