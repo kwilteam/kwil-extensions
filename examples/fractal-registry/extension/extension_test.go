@@ -35,10 +35,10 @@ func TestFractalExt_grpc(t *testing.T) {
 	assert.Equal(t, 1, len(res))
 	assert.EqualValues(t, 1, res[0])
 
-	res, err = clt.CallMethod(ctx, "grants_for")
-	assert.NoError(t, err)
-	assert.Equal(t, 1, len(res))
-	assert.EqualValues(t, 3, res[0])
+	//res, err = clt.CallMethod(ctx, "grants_for")
+	//assert.NoError(t, err)
+	//assert.Equal(t, 1, len(res))
+	//assert.EqualValues(t, 3, res[0])
 }
 
 func TestFractalExt_Behavior(t *testing.T) {

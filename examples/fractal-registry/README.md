@@ -13,5 +13,11 @@ export RPC_URL=xxx
 ## run
 
 ```bash
+# run with go
 go run main.go
+
+# or docker
+make docker
+# put your configuration in .env file
+docker compose up -d
 ```

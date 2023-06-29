@@ -88,6 +88,8 @@ func (e *FractalExt) Name() string {
 	return "idos"
 }
 
+// getMetadata returns the metadata from given context. Default value will be used if metadata is not provided.
+// An error will be returned if a required metadata is not provided.
 func (e *FractalExt) getMetadata(ctx *types.ExecutionContext) (metadata, error) {
 	metadata := metadata{}
 	for k, v := range requiredMetadata {
@@ -103,6 +105,7 @@ func (e *FractalExt) getMetadata(ctx *types.ExecutionContext) (metadata, error) 
 	return metadata, nil
 }
 
+// getContract returns the registry smart contract instance from given context
 func (e *FractalExt) getContract(ctx *types.ExecutionContext) (*registry.Registry, error) {
 	m, err := e.getMetadata(ctx)
 	if err != nil {
@@ -118,6 +121,7 @@ func (e *FractalExt) getContract(ctx *types.ExecutionContext) (*registry.Registr
 	return contract, nil
 }
 
+// GetRegistryInstance returns the registry smart contract instance from chain_name and address
 func (e *FractalExt) GetRegistryInstance(_ string, address string) (*registry.Registry, error) {
 	instance, err := registry.NewRegistry(common.HexToAddress(address), e.eth)
 	if err != nil {
@@ -126,6 +130,7 @@ func (e *FractalExt) GetRegistryInstance(_ string, address string) (*registry.Re
 	return instance, nil
 }
 
+// GetBlockHeight returns the current block height
 func (e *FractalExt) GetBlockHeight(ctx *types.ExecutionContext, _ ...*types.ScalarValue) ([]*types.ScalarValue, error) {
 	num, err := e.eth.BlockNumber(ctx.Ctx)
 	if err != nil {
@@ -135,6 +140,9 @@ func (e *FractalExt) GetBlockHeight(ctx *types.ExecutionContext, _ ...*types.Sca
 	return encodeScalarValues(num)
 }
 
+// GetFractalID returns the fractal id of the given wallet address
+// @param1 walletAddr: the wallet address
+// @return1 fractalID: the fractal id of the given wallet address
 func (e *FractalExt) GetFractalID(ctx *types.ExecutionContext, values ...*types.ScalarValue) ([]*types.ScalarValue, error) {
 	// TODO: make it a fixture
 	contract, err := e.getContract(ctx)
@@ -152,6 +160,10 @@ func (e *FractalExt) GetFractalID(ctx *types.ExecutionContext, values ...*types.
 	return encodeScalarValues(fractalIDStr)
 }
 
+// IsUserInList returns whether the given user is in the given list,
+// @param1 fractalID: the fractal id of the user
+// @param2 listID: the list id
+// @return1 1 for true, 0 for false
 func (e *FractalExt) IsUserInList(ctx *types.ExecutionContext, values ...*types.ScalarValue) ([]*types.ScalarValue, error) {
 	contract, err := e.getContract(ctx)
 	if err != nil {
@@ -173,7 +185,6 @@ func (e *FractalExt) IsUserInList(ctx *types.ExecutionContext, values ...*types.
 		return nil, fmt.Errorf("get fractal id failed: %w", err)
 	}
 
-	// use int8 to represent bool
 	var exist int8
 	if presence {
 		exist = 1
@@ -184,6 +195,8 @@ func (e *FractalExt) IsUserInList(ctx *types.ExecutionContext, values ...*types.
 	return encodeScalarValues(exist)
 }
 
+// GrantsFor returns whether the given user has grants
+// @return1 1 for true, 0 for false
 func (e *FractalExt) GrantsFor(ctx *types.ExecutionContext, _ ...*types.ScalarValue) ([]*types.ScalarValue, error) {
 	contract, err := e.getContract(ctx)
 	if err != nil {
@@ -195,14 +208,14 @@ func (e *FractalExt) GrantsFor(ctx *types.ExecutionContext, _ ...*types.ScalarVa
 		return nil, fmt.Errorf("get grants for failed: %w", err)
 	}
 
-	//var exist int8
-	//if len(grantList) > 0 {
-	//	exist = 1
-	//} else {
-	//	exist = 0
-	//}
+	var exist int8
+	if len(grantList) > 0 {
+		exist = 1
+	} else {
+		exist = 0
+	}
 
-	return encodeScalarValues(len(grantList))
+	return encodeScalarValues(exist)
 }
 
 func encodeScalarValues(values ...any) ([]*types.ScalarValue, error) {
