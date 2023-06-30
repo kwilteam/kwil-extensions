@@ -23,11 +23,10 @@ func (h *HelloWorldExt) SayHello(ctx *types.ExecutionContext, values ...*types.S
 		return nil, fmt.Errorf("expected 1 value for method SayHello, got %d", len(values))
 	}
 
-	if values[0].Type != types.ScalarType_STRING {
-		return nil, fmt.Errorf("expected first value to be of type STRING, got %s", values[0].Type)
+	name, err := values[0].String()
+	if err != nil {
+		return nil, fmt.Errorf("could not convert first value to type TEXT: %w", err)
 	}
-
-	name := values[0].String()
 
 	result := h.sayHello(name, ctx.Metadata["punctuation"])
 
@@ -57,11 +56,10 @@ func (h *HelloWorldExt) SayGoodbye(ctx *types.ExecutionContext, values ...*types
 		return nil, fmt.Errorf("expected 1 value for method SayGoodbye, got %d", len(values))
 	}
 
-	if values[0].Type != types.ScalarType_STRING {
-		return nil, fmt.Errorf("expected first value to be of type STRING, got %s", values[0].Type)
+	name, err := values[0].String()
+	if err != nil {
+		return nil, fmt.Errorf("could not convert first value to type TEXT: %w", err)
 	}
-
-	name := string(values[0].Value)
 
 	result := h.sayGoodbye(name, ctx.Metadata["punctuation"])
 

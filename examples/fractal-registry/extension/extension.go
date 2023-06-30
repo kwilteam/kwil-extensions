@@ -54,7 +54,13 @@ func NewFractalExt(rpcURL string) (*FractalExt, error) {
 	if err != nil {
 		return nil, fmt.Errorf("get block height failed: %w", err)
 	}
-	fmt.Printf("block height: %d\n", blockNum[0].Int())
+
+	intBlock, err := blockNum[0].Int()
+	if err != nil {
+		return nil, err
+	}
+
+	fmt.Printf("block height: %d\n", intBlock)
 
 	return ext, nil
 }

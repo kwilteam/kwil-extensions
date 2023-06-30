@@ -3,12 +3,13 @@ package extension
 import (
 	"context"
 	"fmt"
+	"testing"
+	"time"
+
 	"github.com/caarlos0/env/v8"
 	"github.com/kwilteam/kwil-extensions/client"
 	"github.com/kwilteam/kwil-extensions/types"
 	"github.com/stretchr/testify/assert"
-	"testing"
-	"time"
 )
 
 func TestFractalExt_grpc(t *testing.T) {
@@ -102,7 +103,9 @@ func TestFractalExt_Behavior(t *testing.T) {
 			assert.NoError(ttt, err)
 			got, err := srv.Methods["get_fractal_id"](ctx, getFractalIDArgs...)
 			assert.NoError(ttt, err)
-			fmt.Println("got fractal id:", got[0].String())
+			strId, err := got[0].String()
+			assert.NoError(ttt, err)
+			fmt.Println("got fractal id:", strId)
 
 			//
 			fractalID := got[0].String()

@@ -109,7 +109,7 @@ func (c *ExtensionClient) CallMethod(execCtx *types.ExecutionContext, method str
 
 	var outputs []any
 	for _, scalarOutput := range scalarOutputs {
-		outputs = append(outputs, scalarOutput.Any())
+		outputs = append(outputs, scalarOutput.Value)
 	}
 
 	return outputs, nil

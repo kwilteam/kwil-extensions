@@ -1,7 +1,7 @@
 package convert
 
 import (
-	"fmt"
+	"encoding/json"
 
 	gen "github.com/kwilteam/kwil-extensions/gen"
 	"github.com/kwilteam/kwil-extensions/types"
@@ -10,9 +10,13 @@ import (
 func ConvertScalarToPb(vals []*types.ScalarValue) ([]*gen.ScalarValue, error) {
 	convertedOutputs := make([]*gen.ScalarValue, 0, len(vals))
 	for _, output := range vals {
+		bts, err := json.Marshal(output.Value)
+		if err != nil {
+			return nil, err
+		}
+
 		convertedOutputs = append(convertedOutputs, &gen.ScalarValue{
-			Type:  output.Type.String(),
-			Value: output.Value,
+			Value: bts,
 		})
 	}
 
@@ -22,14 +26,14 @@ func ConvertScalarToPb(vals []*types.ScalarValue) ([]*gen.ScalarValue, error) {
 func ConvertScalarFromPb(vals []*gen.ScalarValue) ([]*types.ScalarValue, error) {
 	convertedInputs := make([]*types.ScalarValue, 0, len(vals))
 	for _, input := range vals {
-		convertedType, err := types.ScalarTypeFromString(input.Type)
+		var v any
+		err := json.Unmarshal(input.Value, &v)
 		if err != nil {
-			return nil, fmt.Errorf("invalid scalar type: %s", err.Error())
+			return nil, err
 		}
 
 		convertedInputs = append(convertedInputs, &types.ScalarValue{
-			Type:  convertedType,
-			Value: input.Value,
+			Value: v,
 		})
 	}
 

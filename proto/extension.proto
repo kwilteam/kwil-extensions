@@ -50,10 +50,8 @@ message ExecuteResponse {
 }
 
 // ScalarValue is used to represent a scalar value.
-// It only supports types supported by Kwil
 message ScalarValue {
-    string type = 1;
-    bytes value = 2;
+    bytes value = 1;
 }
 
 message GetMetadataRequest {
