@@ -10,8 +10,8 @@ github.com/google/go-cmp v0.5.5/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/
 github.com/google/go-cmp v0.5.9 h1:O2Tfq5qg4qc4AmwVlvv0oLiVAGB7enBSJ2x2DqQFi38=
 github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.0.0-rc.5 h1:3IZOAnD058zZllQTZNBioTlrzrBG/IjpiZ133IEtusM=
 github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.0.0-rc.5/go.mod h1:xbKERva94Pw2cPen0s79J3uXmGzbbpDYFBFDlZ4mV/w=
-github.com/kwilteam/kwil-extensions v0.0.0-20230629213551-4c338c1f515e h1:uWErM2bzRhC3/GJYbP2PkPVSwzQW2rU1TUY4Ls3KJBQ=
-github.com/kwilteam/kwil-extensions v0.0.0-20230629213551-4c338c1f515e/go.mod h1:IBoDCZLetV2DoyaHGUMqod2tkLT0ozTQylUS4kEqiv8=
+github.com/kwilteam/kwil-extensions v0.0.0-20230630232020-c7d4c7c7fdc8 h1:LCPBvGlkm+D+/oRY+qXKWSMvD8SQmGoxxuk3OLxc8Gg=
+github.com/kwilteam/kwil-extensions v0.0.0-20230630232020-c7d4c7c7fdc8/go.mod h1:IBoDCZLetV2DoyaHGUMqod2tkLT0ozTQylUS4kEqiv8=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
