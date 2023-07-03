@@ -30,7 +30,7 @@ func NewExtensionClient(ctx context.Context, target string, opts ...ClientOpt) (
 		opt(extClient)
 	}
 
-	dialCtx, cancel := extClient.setTimeout(ctx)
+	dialCtx, cancel := context.WithTimeout(ctx, time.Second*5)
 	defer cancel()
 
 	dialOpts := extClient.grpcDialOpts()

@@ -4,6 +4,4 @@ use ./examples/hello-world
 
 use .
 
-use ./examples/fractal-registry
-
 use ./examples/math

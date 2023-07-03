@@ -11,3 +11,11 @@ tasks:
     cmds:
       - | 
         docker build -t hello-world-extension ./examples/hello-world
+
+  dockerize:math:multi-arch:
+    cmds:
+      - |
+        docker buildx build --push \
+        --platform linux/arm64/v8,linux/amd64 \
+        --tag kwilbrennan/extensions-math:multi-arch \
+        ./examples/math
