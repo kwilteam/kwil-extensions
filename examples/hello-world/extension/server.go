@@ -1,14 +1,15 @@
 package hello
 
 import (
+	"log"
+
 	"github.com/kwilteam/kwil-extensions/server"
-	"github.com/kwilteam/kwil-extensions/server/builder"
 )
 
-func NewHelloWorldExtension() (*server.Server, error) {
+func NewHelloWorldExtension(logger *log.Logger) (*server.ExtensionServer, error) {
 	ext := &HelloWorldExt{}
 
-	return builder.Builder().
+	return server.Builder().
 		Named(ext.Name()).
 		WithRequiredMetadata(requiredMetadata).
 		WithMethods(
@@ -16,5 +17,9 @@ func NewHelloWorldExtension() (*server.Server, error) {
 				"hello":   ext.SayHello,
 				"goodbye": ext.SayGoodbye,
 			},
-		).Build()
+		).
+		WithLoggerFunc(func(l string) {
+			logger.Printf("log received from extension: %s", l)
+		}).
+		Build()
 }

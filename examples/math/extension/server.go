@@ -1,14 +1,15 @@
 package extension
 
 import (
+	"log"
+
 	"github.com/kwilteam/kwil-extensions/server"
-	"github.com/kwilteam/kwil-extensions/server/builder"
 )
 
-func NewMathExtension() (*server.Server, error) {
+func NewMathExtension(logger *log.Logger) (*server.ExtensionServer, error) {
 	ext := &MathExtension{}
 
-	return builder.Builder().
+	return server.Builder().
 		Named(ext.Name()).
 		WithRequiredMetadata(requiredMetadata).
 		WithMethods(
@@ -18,5 +19,9 @@ func NewMathExtension() (*server.Server, error) {
 				"mul": ext.Multiply,
 				"div": ext.Divide,
 			},
-		).Build()
+		).
+		WithLoggerFunc(func(l string) {
+			logger.Printf("log received from extension: %s", l)
+		}).
+		Build()
 }
