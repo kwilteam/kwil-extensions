@@ -143,16 +143,16 @@ func encodeScalarValues(values ...any) ([]*types.ScalarValue, error) {
 	return scalarValues, nil
 }
 
-var requiredMetadata = map[string]string{
-	"round": "up", // can be up or down
-}
-
 // this initialize function checks if round is set.  If not, it sets it to "up"
 func initialize(ctx context.Context, metadata map[string]string) (map[string]string, error) {
-	for k, v := range requiredMetadata {
-		if _, ok := metadata[k]; !ok {
-			metadata[k] = v
-		}
+	_, ok := metadata["round"]
+	if !ok {
+		metadata["round"] = "up"
+	}
+
+	roundVal := metadata["round"]
+	if roundVal != "up" && roundVal != "down" {
+		return nil, fmt.Errorf("round must be either 'up' or 'down'. default is 'up'")
 	}
 
 	return metadata, nil
