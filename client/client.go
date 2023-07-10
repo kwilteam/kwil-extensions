@@ -40,10 +40,10 @@ func NewExtensionClient(ctx context.Context, target string, opts ...ClientOpt) (
 		return nil, err
 	}
 
-	return &ExtensionClient{
-		extClient: gen.NewExtensionServiceClient(grpcClient),
-		conn:      grpcClient,
-	}, nil
+	extClient.conn = grpcClient
+	extClient.extClient = gen.NewExtensionServiceClient(grpcClient)
+
+	return extClient, nil
 }
 
 func (c *ExtensionClient) Close() error {
