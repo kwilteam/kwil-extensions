@@ -51,8 +51,8 @@ func (c *ExtensionClient) Close() error {
 }
 
 func (c *ExtensionClient) GetName(ctx context.Context) (string, error) {
-	// ctx, cancel := c.setTimeout(ctx)
-	// defer cancel()
+	ctx, cancel := context.WithTimeout(ctx, c.timeout)
+	defer cancel()
 
 	resp, err := c.extClient.Name(ctx, &gen.NameRequest{})
 	if err != nil {
@@ -127,10 +127,6 @@ func (c *ExtensionClient) Initialize(ctx context.Context, metadata map[string]st
 	}
 
 	return resp.Metadata, nil
-}
-
-func (c *ExtensionClient) setTimeout(ctx context.Context) (context.Context, context.CancelFunc) {
-	return context.WithTimeout(ctx, c.timeout)
 }
 
 func (c *ExtensionClient) grpcDialOpts() []grpc.DialOption {
