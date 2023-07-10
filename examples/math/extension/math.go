@@ -1,6 +1,7 @@
 package extension
 
 import (
+	"context"
 	"fmt"
 	"math/big"
 
@@ -8,10 +9,6 @@ import (
 )
 
 type MathExtension struct{}
-
-var requiredMetadata = map[string]string{
-	"round": "up", // can be up or down
-}
 
 func (e *MathExtension) Name() string {
 	return "math"
@@ -144,4 +141,19 @@ func encodeScalarValues(values ...any) ([]*types.ScalarValue, error) {
 	}
 
 	return scalarValues, nil
+}
+
+var requiredMetadata = map[string]string{
+	"round": "up", // can be up or down
+}
+
+// this initialize function checks if round is set.  If not, it sets it to "up"
+func initialize(ctx context.Context, metadata map[string]string) (map[string]string, error) {
+	for k, v := range requiredMetadata {
+		if _, ok := metadata[k]; !ok {
+			metadata[k] = v
+		}
+	}
+
+	return metadata, nil
 }

@@ -1,6 +1,7 @@
 package hello
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/kwilteam/kwil-extensions/types"
@@ -8,10 +9,6 @@ import (
 
 type HelloWorldExt struct {
 	greeting string
-}
-
-var requiredMetadata = map[string]string{
-	"punctuation": "",
 }
 
 func (e *HelloWorldExt) Name() string {
@@ -68,4 +65,23 @@ func (h *HelloWorldExt) SayGoodbye(ctx *types.ExecutionContext, values ...*types
 
 func (h *HelloWorldExt) sayGoodbye(name, punctuation string) string {
 	return fmt.Sprintf("Goodbye %s%s", name, punctuation)
+}
+
+var requiredMetadata = []string{"punctuation"}
+
+// this initialize function simply checks whether the required metadata is present
+func initialize(ctx context.Context, metadata map[string]string) (map[string]string, error) {
+	hasRequiredMetadata := true
+	for _, val := range requiredMetadata {
+		if _, ok := metadata[val]; !ok {
+			hasRequiredMetadata = false
+			break
+		}
+	}
+
+	if !hasRequiredMetadata {
+		return nil, fmt.Errorf("missing required metadata")
+	}
+
+	return metadata, nil
 }

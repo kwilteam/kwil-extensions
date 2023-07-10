@@ -1,6 +1,7 @@
 package server
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/kwilteam/kwil-extensions/types"
@@ -8,6 +9,10 @@ import (
 
 // MethodFunc is a function that executes a method
 type MethodFunc func(ctx *types.ExecutionContext, inputs ...*types.ScalarValue) ([]*types.ScalarValue, error)
+
+// InitializeFunc is a function that creates a new instance of an extension.
+// In most cases, this should just validate the metadata being sent.
+type InitializeFunc func(ctx context.Context, metadata map[string]string) (map[string]string, error)
 
 // WithInputsCheck checks the number of inputs.
 // If the number of inputs is not equal to numInputs, it returns an error.

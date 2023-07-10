@@ -115,11 +115,13 @@ func (c *ExtensionClient) CallMethod(execCtx *types.ExecutionContext, method str
 	return outputs, nil
 }
 
-func (c *ExtensionClient) GetMetadata(ctx context.Context) (map[string]string, error) {
+func (c *ExtensionClient) Initialize(ctx context.Context, metadata map[string]string) (map[string]string, error) {
 	// ctx, cancel := c.setTimeout(ctx)
 	// defer cancel()
 
-	resp, err := c.extClient.GetMetadata(ctx, &gen.GetMetadataRequest{})
+	resp, err := c.extClient.Initialize(ctx, &gen.InitializeRequest{
+		Metadata: metadata,
+	})
 	if err != nil {
 		return nil, err
 	}

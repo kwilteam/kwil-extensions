@@ -11,7 +11,7 @@ func NewHelloWorldExtension(logger *log.Logger) (*server.ExtensionServer, error)
 
 	return server.Builder().
 		Named(ext.Name()).
-		WithRequiredMetadata(requiredMetadata).
+		WithInitializer(initialize).
 		WithMethods(
 			map[string]server.MethodFunc{
 				"hello":   ext.SayHello,

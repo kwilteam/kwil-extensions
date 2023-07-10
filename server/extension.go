@@ -20,9 +20,9 @@ type Extension struct {
 // ExtensionConfig configures the functionality of an extension.  This includes things like the extension name, the
 // available methods, etc.
 type ExtensionConfig struct {
-	name             string
-	requiredMetadata map[string]string
-	methods          map[string]MethodFunc
+	name           string
+	initializeFunc InitializeFunc
+	methods        map[string]MethodFunc
 }
 
 func (s *Extension) Name(ctx context.Context, req *gen.NameRequest) (*gen.NameResponse, error) {
@@ -48,12 +48,6 @@ func (s *Extension) Execute(ctx context.Context, req *gen.ExecuteRequest) (*gen.
 		return nil, fmt.Errorf("method not found: %s", req.Name)
 	}
 
-	var err error
-	req.Metadata, err = mergeStringMaps(s.conf.requiredMetadata, req.Metadata)
-	if err != nil {
-		return nil, fmt.Errorf("error with provided metadata: %s", err.Error())
-	}
-
 	convertedInputs, err := convert.ConvertScalarFromPb(req.Args)
 	if err != nil {
 		return nil, fmt.Errorf("error with provided inputs: %s", err.Error())
@@ -77,31 +71,13 @@ func (s *Extension) Execute(ctx context.Context, req *gen.ExecuteRequest) (*gen.
 	}, nil
 }
 
-func (s *Extension) GetMetadata(ctx context.Context, req *gen.GetMetadataRequest) (*gen.GetMetadataResponse, error) {
-	return &gen.GetMetadataResponse{
-		Metadata: s.conf.requiredMetadata,
-	}, nil
-}
-
-// mergeStringMaps merges two maps of strings.  If a key exists in both maps,
-// the value from the second map is used.
-// If a value in the first map is an empty string, the value from the second
-// map is required to be non-empty.
-func mergeStringMaps(firstMap map[string]string, secondMap map[string]string) (map[string]string, error) {
-	finalMap := make(map[string]string)
-
-	for key, value := range firstMap {
-		secondValue, ok := secondMap[key]
-		if !ok {
-			if value == "" {
-				return nil, fmt.Errorf("missing required value: %s", key)
-			}
-
-			finalMap[key] = value
-		} else {
-			finalMap[key] = secondValue
-		}
+func (s *Extension) Initialize(ctx context.Context, req *gen.InitializeRequest) (*gen.InitializeResponse, error) {
+	metadata, err := s.conf.initializeFunc(ctx, req.Metadata)
+	if err != nil {
+		return nil, fmt.Errorf("error initializing extension: %w", err)
 	}
 
-	return finalMap, nil
+	return &gen.InitializeResponse{
+		Metadata: metadata,
+	}, nil
 }
