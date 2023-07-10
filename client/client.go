@@ -63,8 +63,8 @@ func (c *ExtensionClient) GetName(ctx context.Context) (string, error) {
 }
 
 func (c *ExtensionClient) ListMethods(ctx context.Context) ([]string, error) {
-	// ctx, cancel := c.setTimeout(ctx)
-	// defer cancel()
+	ctx, cancel := context.WithTimeout(ctx, c.timeout)
+	defer cancel()
 
 	resp, err := c.extClient.ListMethods(ctx, &gen.ListMethodsRequest{})
 	if err != nil {
@@ -75,8 +75,8 @@ func (c *ExtensionClient) ListMethods(ctx context.Context) ([]string, error) {
 }
 
 func (c *ExtensionClient) CallMethod(execCtx *types.ExecutionContext, method string, args ...any) ([]any, error) {
-	// ctx, cancel := c.setTimeout(execCtx.Ctx)
-	// defer cancel()
+	ctx, cancel := context.WithTimeout(execCtx.Ctx, c.timeout)
+	defer cancel()
 
 	var encodedArgs []*types.ScalarValue
 	for _, arg := range args {
@@ -93,7 +93,7 @@ func (c *ExtensionClient) CallMethod(execCtx *types.ExecutionContext, method str
 		return nil, fmt.Errorf("error converting arguments: %s", err.Error())
 	}
 
-	resp, err := c.extClient.Execute(execCtx.Ctx, &gen.ExecuteRequest{
+	resp, err := c.extClient.Execute(ctx, &gen.ExecuteRequest{
 		Name:     strings.ToLower(method),
 		Args:     pbArgs,
 		Metadata: execCtx.Metadata,
@@ -116,8 +116,8 @@ func (c *ExtensionClient) CallMethod(execCtx *types.ExecutionContext, method str
 }
 
 func (c *ExtensionClient) Initialize(ctx context.Context, metadata map[string]string) (map[string]string, error) {
-	// ctx, cancel := c.setTimeout(ctx)
-	// defer cancel()
+	ctx, cancel := context.WithTimeout(ctx, c.timeout)
+	defer cancel()
 
 	resp, err := c.extClient.Initialize(ctx, &gen.InitializeRequest{
 		Metadata: metadata,
