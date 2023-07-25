@@ -83,9 +83,9 @@ func (e *MathExtension) Divide(ctx *types.ExecutionContext, values ...*types.Sca
 		return nil, fmt.Errorf("failed to convert value to int: %w. \nreceived value: %v", err, val1Int)
 	}
 
-	bigVal1 := big.NewFloat(float64(val0Int))
+	bigVal1 := newBigFloat(float64(val0Int))
 
-	bigVal2 := big.NewFloat(float64(val1Int))
+	bigVal2 := newBigFloat(float64(val1Int))
 
 	result := new(big.Float).Quo(bigVal1, bigVal2)
 
@@ -99,34 +99,25 @@ func (e *MathExtension) Divide(ctx *types.ExecutionContext, values ...*types.Sca
 	return encodeScalarValues(IntResult.Int64())
 }
 
+// roundUp takes a big.Float and returns a new big.Float rounded up.
 func roundUp(f *big.Float) *big.Int {
-	half := new(big.Float).SetFloat64(0.5)
-	if f.Cmp(big.NewFloat(0)) == -1 { // f < 0
-		f.Sub(f, half)
-	} else {
-		f.Add(f, half)
+	c := new(big.Float).SetPrec(precision).Copy(f)
+	r := new(big.Int)
+	f.Int(r)
+
+	if c.Sub(c, new(big.Float).SetPrec(precision).SetInt(r)).Sign() > 0 {
+		r.Add(r, big.NewInt(1))
 	}
 
-	rounded := new(big.Float).Quo(f, big.NewFloat(1))
-
-	i := new(big.Int)
-	rounded.Int(i) // get the integral part
-	return i
+	return r
 }
 
+// roundDown takes a big.Float and returns a new big.Float rounded down.
 func roundDown(f *big.Float) *big.Int {
-	half := new(big.Float).SetFloat64(0.5)
-	if f.Cmp(big.NewFloat(0)) == -1 { // f < 0
-		f.Add(f, half)
-	} else {
-		f.Sub(f, half)
-	}
+	r := new(big.Int)
+	f.Int(r)
 
-	rounded := new(big.Float).Quo(f, big.NewFloat(1))
-
-	i := new(big.Int)
-	rounded.Int(i) // get the integral part
-	return i
+	return r
 }
 
 func encodeScalarValues(values ...any) ([]*types.ScalarValue, error) {
@@ -156,4 +147,14 @@ func initialize(ctx context.Context, metadata map[string]string) (map[string]str
 	}
 
 	return metadata, nil
+}
+
+const (
+	precision = 128
+)
+
+func newBigFloat(num float64) *big.Float {
+	bg := new(big.Float).SetPrec(precision)
+
+	return bg.SetFloat64(num)
 }

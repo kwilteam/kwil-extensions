@@ -1,6 +1,11 @@
 package server
 
-import "context"
+import (
+	"context"
+	"errors"
+	"fmt"
+	"strings"
+)
 
 // defaultExtension is a struct that contains the default values for
 // an extension
@@ -10,6 +15,7 @@ var defaultExtension = &extensionBuilder{
 		methods:        make(map[string]MethodFunc),
 	},
 	logFunc: func(l string) {},
+	errs:    []error{},
 }
 
 // Builder creates a new ExtensionBuilder object.
@@ -20,6 +26,7 @@ func Builder() ExtensionBuilder {
 type extensionBuilder struct {
 	config  *ExtensionConfig
 	logFunc LoggerFunc
+	errs    []error
 }
 
 // ExtensionBuilder is the interface for creating an extension server
@@ -49,7 +56,17 @@ func (b *extensionBuilder) WithInitializer(fn InitializeFunc) ExtensionBuilder {
 }
 
 func (b *extensionBuilder) WithMethods(methods map[string]MethodFunc) ExtensionBuilder {
-	b.config.methods = methods
+	convertedMethods := make(map[string]MethodFunc)
+	for name, method := range methods {
+		lowerName := strings.ToLower(name)
+		_, ok := convertedMethods[lowerName]
+		if ok {
+			b.errs = append(b.errs, fmt.Errorf("duplicate method name: %s", name))
+		}
+
+		convertedMethods[lowerName] = method
+	}
+	b.config.methods = convertedMethods
 	return b
 }
 
@@ -64,5 +81,5 @@ func (b *extensionBuilder) Build() (*ExtensionServer, error) {
 		extension: &Extension{
 			conf: b.config,
 		},
-	}, nil
+	}, errors.Join(b.errs...)
 }
