@@ -17,5 +17,5 @@ tasks:
       - |
         docker buildx build --push \
         --platform linux/arm64/v8,linux/amd64 \
-        --tag kwilbrennan/extensions-math:multi-arch \
+        --tag kwildb/extension-math:multi-arch \
         ./examples/math
