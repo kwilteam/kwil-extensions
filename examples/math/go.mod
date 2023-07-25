@@ -2,7 +2,7 @@ module github.com/kwilteam/math
 
 go 1.20
 
-require github.com/kwilteam/kwil-extensions v0.0.0-20230725062324-1c13d097ddcb
+require github.com/kwilteam/kwil-extensions v0.0.0-20230725193657-bfc4c67a6a8f
 
 require (
 	github.com/cstockton/go-conv v1.0.0 // indirect
