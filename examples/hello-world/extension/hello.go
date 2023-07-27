@@ -12,7 +12,7 @@ type HelloWorldExt struct {
 }
 
 func (e *HelloWorldExt) Name() string {
-	return "hello-world"
+	return "hello_world"
 }
 
 func (h *HelloWorldExt) SayHello(ctx *types.ExecutionContext, values ...*types.ScalarValue) ([]*types.ScalarValue, error) {
